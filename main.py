@@ -9,13 +9,18 @@ class AgentRequest(BaseModel):
     customer_id: str = Field(min_length=1)
     question: str = Field(min_length=1)
 
+class CaseResponse(BaseModel):
+    customer_id: str
+    case_id: str
+    status: str
+    missing_document: str
 
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
 
 
-@app.post("/agent/query")
+@app.post("/agent/query", response_model=CaseResponse)
 def query_agent(request: AgentRequest):
     case = MOCK_CASES.get(request.customer_id)
 

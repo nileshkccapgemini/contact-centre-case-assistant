@@ -14,7 +14,12 @@ def test_existing_customer():
     )
 
     assert response.status_code == 200
-    assert response.json()["case_id"] == "CLM-202"
+    assert response.json() == {
+        "customer_id": "CUST-101",
+        "case_id": "CLM-202",
+        "status": "Awaiting documents",
+        "missing_document": "Repair estimate"
+    }
 
 
 def test_unknown_customer():
