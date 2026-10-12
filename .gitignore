@@ -1,7 +1,7 @@
 
 
 #Ignore insiders AI rules
-.github\instructions\codacy.instructions.md
+.github/instructions/codacy.instructions.md
 .venv/
 __pycache__/
 .pytest_cache/
