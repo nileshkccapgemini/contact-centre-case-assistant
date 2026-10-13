@@ -1,0 +1,9 @@
+.venv/
+.git/
+.github/
+.codacy/
+__pycache__/
+.pytest_cache/
+.env
+.env.*
+image.png
