@@ -1,3 +1,5 @@
+
+from agent import answer_case_question
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from mock_cases import MOCK_CASES
@@ -12,8 +14,9 @@ class AgentRequest(BaseModel):
 class CaseResponse(BaseModel):
     customer_id: str
     case_id: str
-    status: str
-    missing_document: str
+    answer: str
+    recommended_action: str
+    approval_required: bool
 
 @app.get("/health")
 def health_check():
@@ -30,9 +33,15 @@ def query_agent(request: AgentRequest):
             detail="No case found for this customer"
         )
 
+    agent_result = answer_case_question(
+        request.question,
+        case
+    )
+
     return {
         "customer_id": request.customer_id,
         "case_id": case["case_id"],
-        "status": case["status"],
-        "missing_document": case["missing_document"]
+        "answer": agent_result["answer"],
+        "recommended_action": agent_result["recommended_action"],
+        "approval_required": agent_result["approval_required"]
     }
