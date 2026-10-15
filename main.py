@@ -1,5 +1,4 @@
-
-from agent import answer_case_question
+from adk_runner import ask_case_agent
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from mock_cases import MOCK_CASES
@@ -24,7 +23,7 @@ def health_check():
 
 
 @app.post("/agent/query", response_model=CaseResponse)
-def query_agent(request: AgentRequest):
+async def query_agent(request: AgentRequest):
     case = MOCK_CASES.get(request.customer_id)
 
     if case is None:
@@ -33,7 +32,7 @@ def query_agent(request: AgentRequest):
             detail="No case found for this customer"
         )
 
-    agent_result = answer_case_question(
+    agent_result = await ask_case_agent(
         request.question,
         case
     )

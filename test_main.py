@@ -1,11 +1,23 @@
-from agent import answer_case_question
+from unittest.mock import AsyncMock, patch
 from fastapi.testclient import TestClient
 from main import app
 
 client = TestClient(app)
 
+@patch("main.ask_case_agent", new_callable=AsyncMock)
 
-def test_existing_customer():
+def test_existing_customer(mock_ask_case_agent):
+    mock_ask_case_agent.return_value = {
+        "answer": (
+            "Case CLM-202 is currently awaiting documents "
+            "because the repair estimate is missing."
+        ),
+        "recommended_action": (
+            "Ask the customer to provide the repair estimate."
+        ),
+        "approval_required": True,
+    }
+    
     response = client.post(
         "/agent/query",
         json={
@@ -56,26 +68,3 @@ def test_empty_customer_id():
     assert response.json()["detail"][0]["loc"] == [
         "body", "customer_id"
     ]
-
-def test_answer_case_question():
-    case = {
-        "case_id": "CLM-202",
-        "status": "Awaiting documents",
-        "missing_document": "Repair estimate"
-    }
-
-    result = answer_case_question(
-        "What is holding up the claim?",
-        case
-    )
-
-    assert result == {
-        "answer": (
-            "Case CLM-202 is currently awaiting documents "
-            "because the repair estimate is missing."
-        ),
-        "recommended_action": (
-            "Ask the customer to provide the repair estimate."
-        ),
-        "approval_required": True
-    }
