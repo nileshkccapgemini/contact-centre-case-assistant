@@ -1,4 +1,11 @@
+from pydantic import BaseModel
 from google.adk.agents.llm_agent import Agent
+
+
+class CaseAgentResponse(BaseModel):
+    answer: str
+    recommended_action: str
+    approval_required: bool
 
 root_agent = Agent(
     name="case_assistant",
@@ -11,6 +18,8 @@ root_agent = Agent(
         "If the case facts do not contain the answer, say that the information "
         "is not available in the case. "
         "Recommend a sensible next action when the case facts support one. "
+        "Always set approval_required to true because a human adviser must approve any recommended action. "
         "Do not make changes to the case."
     ),
+    output_schema=CaseAgentResponse,
 )
